@@ -6,7 +6,8 @@ Any improvements are welcomed.
 
 ## Getting Started
 
-No real mystery here. Just copy data into Cell B4 and run macro.
+No real mystery here. Just copy data into Cell B4 and run macro. It will copy the formatted data to E Column & the clipboard.
+Ready for you to paste into CDK EXPERT POSTING.
 
 ## Deployment
 
