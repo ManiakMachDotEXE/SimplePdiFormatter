@@ -1,0 +1,105 @@
+
+Public Function SuperMid(ByVal strMain As String, str1 As String, str2 As String, Optional reverse As Boolean) As String
+'DESCRIPTION: Extract the portion of a string between the two substrings defined in str1 and str2.
+'DEVELOPER: Ryan Wells (wellsr.com)
+'HOW TO USE: - Pass the argument your main string and the 2 strings you want to find in the main string.
+' - This function will extract the values between the end of your first string and the beginning
+' of your next string.
+' - If the optional boolean "reverse" is true, an InStrRev search will occur to find the last
+' instance of the substrings in your main string.
+    Dim i As Integer, j As Integer, temp As Variant
+    On Error GoTo errhandler:
+    If reverse = True Then
+        i = InStrRev(strMain, str1)
+        j = InStrRev(strMain, str2)
+        If Abs(j - i) < Len(str1) Then j = InStrRev(strMain, str2, i)
+        If i = j Then 'try to search 2nd half of string for unique match
+            j = InStrRev(strMain, str2, i - 1)
+        End If
+    Else
+        i = InStr(1, strMain, str1)
+        j = InStr(1, strMain, str2)
+        If Abs(j - i) < Len(str1) Then j = InStr(i + Len(str1), strMain, str2)
+        If i = j Then 'try to search 2nd half of string for unique match
+            j = InStr(i + 1, strMain, str2)
+        End If
+    End If
+    If i = 0 And j = 0 Then GoTo errhandler:
+    If j = 0 Then j = Len(strMain) + Len(str2) 'just to make it arbitrarily large
+    If i = 0 Then i = Len(strMain) + Len(str1) 'just to make it arbitrarily large
+    If i > j And j <> 0 Then 'swap order
+        temp = j
+        j = i
+        i = temp
+        temp = str2
+        str2 = str1
+        str1 = temp
+    End If
+    i = i + Len(str1)
+    SuperMid = Mid(strMain, i, j - i)
+    Exit Function
+errhandler:
+    MsgBox "Error extracting strings. Check your input" & vbNewLine & vbNewLine & "Aborting", , "Strings not found"
+    End
+End Function
+
+
+
+Sub PdiEpost()
+   
+   'Turn screen updating off for quicker processing
+    Application.ScreenUpdating = False
+    
+    Range("B4").Select
+    
+    ActiveCell.Value = Trim(ActiveCell.Value)
+    
+    
+    If Range("B4").Value = "" Then
+        MsgBox "Cell B4 is empty please" & vbCrLf & "copy and paste data to Cell B4", vbCritical, "No Data"
+        Exit Sub
+        
+    Else
+        
+        Do
+            
+            ActiveCell.Value = Left(ActiveCell.Value, 17) 
+            ActiveCell.Value = Right(ActiveCell.Value, 8)
+            Range("E" & (ActiveCell.Row)) = "2211.16800." & ActiveCell.Value
+            ActiveCell.Offset(1, 0).Select
+        Loop Until ActiveCell.Value = ""
+        
+        
+        Dim MonthControl As Variant
+        MonthControl = InputBox("Enter 3001 CTRL")
+        
+        ActiveCell.Offset(1, 0).Select
+        ActiveCell.Value = Trim(ActiveCell.Value)
+        
+        Dim PdiTotal As Variant
+        PdiTotal = SuperMid(ActiveCell.Value, "L", "-")
+        PdiTotal = Replace(PdiTotal, ".", "")
+        PdiTotal = Replace(PdiTotal, ",", "")
+        PdiTotal = Replace(PdiTotal, " ", "")
+        
+        Dim GasTotal As Variant
+        GasTotal = SuperMid(ActiveCell.Value, "-", "-")
+        GasTotal = Replace(GasTotal, ".", "")
+        GasTotal = Replace(GasTotal, ".", "")
+        GasTotal = Replace(GasTotal, " ", "")
+        
+        
+        Range("E" & (ActiveCell.Row)) = "3001." & PdiTotal & "." + MonthControl
+        Range("E" & (ActiveCell.Row)).Select
+        ActiveCell.Offset(1, 0).Select
+        ActiveCell.Value = "3001." & GasTotal & "." + MonthControl
+        ActiveCell.Offset(1, 0).Select
+        ActiveCell.Value = "0141.-" & GasTotal & "." & "GAS"
+        ActiveCell.Offset(-3, 0).Select
+        Rows(ActiveCell.Row).EntireRow.Delete
+        Range("E4", Range("E4").End(xlDown)).Copy
+        MsgBox "ALL DONE!" & vbCrLf & "The Epost has been copied to the clipboard" & vbCrLf & "Now paste to AGJE.", , "EPost Format Complete!"
+        
+        Exit Sub
+        
+    End If
