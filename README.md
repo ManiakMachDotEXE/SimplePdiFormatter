@@ -11,7 +11,7 @@ No real mystery here. Just copy data into Cell B4 and run macro.
 ## Deployment
 
 As it stands this will only format the data so that it can be used in CDK Drive Dealer Management System. AGJE EXPERT ENTRY Function.
-Which accepts copied data instead of manual posting. Which makes my life a whole lot easier. While it formats the data for EXPERT posting 
+Which accepts copied data instead of manual posting and makes my life a whole lot easier. While it formats the data for EXPERT posting 
 I've only set the macro to format 1 Type of entry data. PDI Statements. I plan to support other tedious posting.
 
 ## Built With
